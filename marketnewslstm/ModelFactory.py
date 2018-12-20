@@ -66,7 +66,7 @@ class ModelFactory:
             validation_steps=5
             epochs=20
             look_back=90
-            look_back=10
+            look_back_step=10
 
         print(f'Toy:{toy}, epochs:{epochs}, steps per epoch: {steps_per_epoch}, validation steps:{validation_steps}')
         print(f'Batch_size:{batch_size}, validation batch size:{validation_batch_size}')
