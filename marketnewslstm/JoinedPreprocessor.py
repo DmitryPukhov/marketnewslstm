@@ -11,6 +11,23 @@ class JoinedPreprocessor:
         self.market_prepro = market_prepro
         self.news_prepro = news_prepro
 
+    def get_X(self, market, news):
+        """
+        Returns preprocessed market + news
+        :return: X
+        """
+        # Market row
+        market_X = self.market_prepro.get_X(market)
+        # One row in news contains many asset codes. Extend it to news_X with one asset code - one row
+        news_idx = self.news_prepro.news_idx(news)
+        news_X = self.news_prepro.get_X(news_idx, news)
+        news_X.time = news_X.time.astype('datetime64')
+        # X = market X + news X
+        X = market_X.merge(news_X, how='left', on=['time', 'assetCode'], left_index=True)
+        X = X.fillna(0)
+        X = X[self.market_prepro.feature_cols + self.news_prepro.feature_cols]
+        return X
+
     def get_Xy(self, idx, market, news, is_train=False, is_raw_y=False):
         """
         Returns preprocessed features and labels for given indices

@@ -69,7 +69,6 @@ class NewsPrepro:
             news_df[self.news_cols_numeric] = self.numeric_scaler.transform(news_df[self.news_cols_numeric])
         return news_df
 
-
     def news_idx(self, news):
         """
         Get asset code, time -> news id
