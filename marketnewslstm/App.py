@@ -85,8 +85,6 @@ else:
     sample_size = 500000
 train_idx, val_idx, test_idx = TrainValTestSplit.train_val_test_split(market, sample_size)
 
-
-
 # Create preprocessors
 market_prepro = MarketPrepro()
 market_prepro.fit(train_idx, market)

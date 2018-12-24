@@ -50,42 +50,46 @@ class JoinedPreprocessor:
 
         return X, y
 
-    def with_look_back(self, X, y, look_back, look_back_step):
+    def with_look_back_Xy(self, X, y, look_back, look_back_step):
         """
-        Add look back window values to prepare dataset for LSTM
+        Add look back window values to X, y
         """
+        X_processed = self.with_look_back(X, look_back , look_back_step)
+        y_processed = self.with_look_back(y, look_back, look_back_step)
+        return X_processed, y_processed
+
+    def with_look_back(self, df, look_back, look_back_step, start_pos=0):
+        """
+        Add look back window values to X or y to prepare dataset for LSTM
+        """
+        # look_back should be multiple of look_back_step. Fix if not
         look_back_fixed = look_back_step * (look_back // look_back_step)
-        # Fill look_back rows before first
-        first_xrow = X.values[0]
-        first_xrow.shape = [1, X.values.shape[1]]
-        first_xrows = np.repeat(first_xrow, look_back_fixed, axis=0)
-        X_values = np.append(first_xrows, X.values, axis=0)
 
-        if y is not None:
-            first_yrow = y.values[0]
-            first_yrow.shape = [1, y.values.shape[1]]
-            first_yrows = np.repeat(first_yrow, look_back_fixed, axis=0)
-            y_values = np.append(first_yrows, y.values, axis=0)
-
-        # for i in range(0, len(X) - look_back + 1):
-        X_processed = []
-        y_processed = []
-        for i in range(look_back_fixed , len(X_values)):
-            # Add lookback to X
-            x_window = X_values[i - (look_back_fixed//look_back_step)*look_back_step:i+1:look_back_step, :]
-            X_processed.append(x_window)
-            # If input is X only, we'll not output y
-            if y is None:
-                continue
-            # Add lookback to y
-            y_window = y_values[i - (look_back_fixed//look_back_step)*look_back_step:i+1:look_back_step, :]
-            y_processed.append(y_window)
-        # Return Xy for train/test or X for prediction
-        if y is not None:
-            #return np.array(X_processed), np.array(y_processed)
-            return np.array(X_processed), y.values
+        # If not enough rows before start_pos for look back, fill them with repeatable start row.
+        if start_pos < look_back_fixed:
+            first_rows_num = look_back_fixed - start_pos
+            # Fill look_back rows before first
+            first_row = df.values[0]
+            first_row.shape = [1, df.values.shape[1]]
+            first_rows = np.repeat(first_row, first_rows_num, axis=0)
+            # After inserting rows, start pos should point to the same row
+            start_pos_fixed = look_back_fixed
+            values = np.append(first_rows, df.values, axis=0)
         else:
-            return np.array(X_processed)
+            # Ok, enough data before start pos for look back
+            values = df.values
+            start_pos_fixed = start_pos
+
+        processed = []
+
+        for i in range(start_pos_fixed, len(values)):
+            # Add lookback to X
+            window = values[i - (look_back_fixed // look_back_step) * look_back_step:i + 1:look_back_step, :]
+            processed.append(window)
+
+        # Return Xy for train/test or X for prediction
+        return np.array(processed)
+
 
 # #Market and news preprocessor instance
 # prepro = JoinedPreprocessor(market_prepro, news_prepro)
