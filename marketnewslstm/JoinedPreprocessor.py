@@ -50,14 +50,6 @@ class JoinedPreprocessor:
 
         return X, y
 
-    def with_look_back_Xy(self, X, y, look_back, look_back_step):
-        """
-        Add look back window values to X, y
-        """
-        X_processed = self.with_look_back(X, look_back , look_back_step)
-        y_processed = self.with_look_back(y, look_back, look_back_step)
-        return X_processed, y_processed
-
     def with_look_back(self, df, look_back, look_back_step, start_pos=0):
         """
         Add look back window values to X or y to prepare dataset for LSTM

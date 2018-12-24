@@ -32,7 +32,7 @@ class JoinedGenerator:
             # Get X, y data for this batch, containing market and news, but without look back yet
             X, y = self.prepro.get_Xy(batch_idx, self.market, self.news, is_train)
             # Add look back data to X, y
-            X, y = self.prepro.with_look_back(X, y, look_back, look_back_step)
+            X = self.prepro.with_look_back(X, look_back, look_back_step)
             yield X, y
 
     def get_random_assets_idx(self, batch_size):

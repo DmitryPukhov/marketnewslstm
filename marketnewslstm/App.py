@@ -105,7 +105,7 @@ print('Generators created')
 model = ModelFactory.lstm_128(len(market_prepro.feature_cols) + len(news_prepro.feature_cols))
 model.load_weights("best_weights.h5")
 print(model.summary())
-#ModelFactory.train(model, toy, join_generator, val_generator)
+ModelFactory.train(model, toy, join_generator, val_generator)
 
 # Predict
 predictor = Predictor( prepro, market_prepro, news_prepro, model, ModelFactory.look_back, ModelFactory.look_back_step)
@@ -115,7 +115,7 @@ y_pred = predictor.predict(market, news)
 
 plt.plot(y_pred)
 plt.plot(y_test)
-plt.legend("pred", "test")
+plt.legend(["pred", "test"])
 plt.show()
 
 # get_merged_Xy(train_idx.sample(5), market, pd.DataFrame([],columns=news.columns)).head()
