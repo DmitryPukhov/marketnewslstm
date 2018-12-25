@@ -38,4 +38,4 @@ class Predictor:
                                             look_back=self.look_back,
                                             look_back_step=self.look_back_step)
         y_pred = self.model.predict(X_test) * 2 - 1
-        return y_pred, y_test
+        return y_pred, y_test.values
